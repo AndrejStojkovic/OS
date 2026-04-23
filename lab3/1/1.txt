@@ -1,0 +1,58 @@
+Интерактивен режим:
+
+docker run -it --name lab3 debian:12-slim bash
+
+Внатре во container-от
+apt update
+apt install -y python3
+mkdir /data
+exit
+
+Правиме Docker Image од интерактивниот режим
+docker commit lab3 products-host-i
+
+И потоа го бришеме привремениот Docker Image со име lab3
+docker rm lab3
+
+Го стартуваме Docker Image-от со име products-host-i-container
+docker run -d --name products-host-i-container -p 8080:8000 products-host-i python3 -m http.server 8000 --directory /data
+
+Правиме проверка дали контејнерот работи и дали се портите точно мапирани
+docker ps
+docker port products-host-i-container
+
+
+Со користење на Dockerfile:
+
+docker build -t products-host-d .
+
+Го стартуваме Docker Image-от со име products-host-d-container
+docker run -d --name products-host-d-container -p 8081:8000 products-host-d
+
+Правиме проверка дали контејнерот работи и дали се портите точно мапирани
+docker ps
+docker port products-host-i-container
+
+
+
+Рачно копираме products.txt во контејнерите
+docker cp products.txt products-host-i-container:/data/
+docker cp products.txt products-host-d-container:/data/
+
+Тестираме преку curl
+curl http://localhost:8080/products.txt
+curl http://localhost:8081/products.txt
+
+Ги стопираме и бришеме контејнерите
+docker stop products-host-i-container
+docker stop products-host-d-container
+docker rm products-host-i-container
+docker rm products-host-d-container
+
+Стартуваме повторно Docker Image products-host-d но овој пат со volume
+docker run --name products-host-d-container -p 8081:8000 -v %cd%/html:/data products-host-d
+
+Тестираме преку curl
+curl http://localhost:8081/products.txt
+
+

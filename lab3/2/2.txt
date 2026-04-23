@@ -1,0 +1,36 @@
+Градиме нов Docker Image со име products-viewer
+docker build -t products-viewer .
+
+
+
+Го стартуваме контејнерот products-viewer-container
+docker run -d --name products-viewer-container -v %cd%/html:/data products-viewer
+
+Проверуваме дали Java апликацијата успешно ги излиста производите
+docker logs products-viewer-container
+
+
+
+Го стартуваме повторно контејнерот products-viewer-container
+docker run -d --name products-viewer-container -v %cd%/html:/data -e PRODUCT_FILE_PATH=/data/products.txt products-viewer
+
+Проверуваме повторно дали Java апликацијата успешно ги излиста производите
+docker logs products-viewer-container
+
+
+
+
+Во двата случаи кога го стартуваме контејнерот апликацијата ќе се изврши успешно:
+Product Name: Fridge
+Product Price: $600
+Product Quantity: 5
+
+Product Name: TV
+Product Price: $1500
+Product Quantity: 6
+
+Product Name: Microwave
+Product Price: $200
+Product Quantity: 10
+
+
