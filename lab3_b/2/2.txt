@@ -1,0 +1,18 @@
+docker build -t catalog-viewer .
+
+docker run --name catalog-viewer-container -v catalog-data:/srv/catalog catalog-viewer
+
+docker logs catalog-viewer-container
+
+
+Копираме inventory.txt користејќи catalog-host-d-container:
+
+docker cp inventory.txt catalog-host-d-container:/srv/catalog/
+
+
+docker stop catalog-viewer-container
+
+docker rm catalog-viewer-container
+
+
+docker run --name catalog-viewer-container -v catalog-data:/srv/catalog -e PRODUCT_FILE_PATH=/srv/catalog/inventory.txt catalog-viewer

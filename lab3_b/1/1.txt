@@ -1,0 +1,58 @@
+Интерактивен режим:
+
+docker run -it --name lab3 debian:12-slim bash
+
+Внатре во Docker:
+> apt update
+> apt install -y python3
+> mkdir /srv/catalog
+> exit
+
+docker commit lab3 catalog-host-i
+
+docker rm lab3
+
+docker run -d --name catalog-host-i-container -p 8090:9000 catalog-host-i python3 -m http.server 9000 --directory /srv/catalog
+
+docker ps
+
+
+Со користење на Dockerfile:
+
+docker build -t catalog-host-d .
+
+docker run -d --name catalog-host-d-container -p 8091:9000 catalog-host-d
+
+docker ps
+
+
+Рачно копирање на датотеки:
+
+docker cp products.txt catalog-host-i-container:/srv/catalog/
+docker cp products.txt catalog-host-d-container:/srv/catalog/
+
+
+Тестирање преку curl:
+
+curl http://localhost:8090/products.txt
+curl http://localhost:8091/products.txt
+
+
+Стопирање и бришење на контејнери:
+
+docker stop catalog-host-i-container
+docker stop catalog-host-d-container
+
+docker rm catalog-host-i-container
+docker rm catalog-host-d-container
+
+
+Docker Volume:
+
+docker volume create catalog-data
+
+docker run -d --name catalog-host-d-container -p 8091:9000 -v catalog-data:/srv/catalog catalog-host-d
+
+docker cp products.txt catalog-host-d-container:/srv/catalog/
+
+curl http://localhost:8091/products.txt
